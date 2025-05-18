@@ -1,0 +1,30 @@
+Step-by-step setup instructions:
+
+To check if you have Node.js installed, open a terminal or command prompt and run:
+    node --version
+If you see a version number (e.g., v18.17.0), Node.js is installed.
+If you get an error or no version, download and install Node.js from https://nodejs.org/
+
+1. Install Node.js from https://nodejs.org/ if you don't have it already.
+2. Install Expo CLI globally (recommended for beginners):
+    npm install -g expo-cli
+3. Create a new Expo project (if you haven't):
+    npx create-expo-app welder-settings
+    cd welder-settings
+4. Copy this App.tsx file into your project's folder (replace the default App.js or App.tsx).
+5. Install the required dependencies:
+    npx expo install react-native @react-native-picker/picker
+6. Start the Expo development server:
+    npx expo start
+7. Download the Expo Go app on your iOS or Android device from the App Store or Google Play.
+8. Scan the QR code shown in your terminal or browser with Expo Go to run the app on your phone.
+
+Troubleshooting (Windows):
+If you see an error like:
+    "npm.ps1 cannot be loaded because running scripts is disabled on this system."
+Open PowerShell as Administrator and run:
+    Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+Then try your npm or npx command again.
+For more info, see: https://go.microsoft.com/fwlink/?LinkID=135170
+
+For more help, see: https://docs.expo.dev/get-started/installation/
