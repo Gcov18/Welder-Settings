@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-section">
+    <h3>📝 Provide Your Feedback</h3>
+    <p>Help improve our predictions by sharing your welding results!</p>
+
+    <form method="POST" action="/feedback">
+        <div class="form-grid">
+            <div>
+                <h4>Parameters You Used</h4>
+                <div class="form-group">
+                    <label for="user_voltage">Voltage (V):</label>
+                    <input type="number" id="user_voltage" name="user_voltage" step="0.1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="user_amperage">Amperage (A):</label>
+                    <input type="number" id="user_amperage" name="user_amperage" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="user_wire_feed_speed">Wire Feed Speed (IPM):</label>
+                    <input type="number" id="user_wire_feed_speed" name="user_wire_feed_speed">
+                </div>
+
+                <div class="form-group">
+                    <label for="user_travel_speed">Travel Speed (IPM):</label>
+                    <input type="number" id="user_travel_speed" name="user_travel_speed" step="0.1">
+                </div>
+            </div>
+
+            <div>
+                <h4>Weld Results</h4>
+                <div class="form-group">
+                    <label for="result_quality">Result Quality (1-10):</label>
+                    <input type="range" id="result_quality" name="result_quality" min="1" max="10" value="5"
+                           oninput="document.getElementById('quality_value').textContent = this.value">
+                    <span id="quality_value">5</span>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="weld_success" name="weld_success">
+                        Weld was successful
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="defects">Defects Observed:</label>
+                    <select id="defects" name="defects">
+                        <option value="">No defects</option>
+                        <option value="porosity">Porosity</option>
+                        <option value="incomplete_penetration">Incomplete Penetration</option>
+                        <option value="slag_inclusion">Slag Inclusion</option>
+                        <option value="crack">Cracking</option>
+                        <option value="undercut">Undercut</option>
+                        <option value="overlap">Overlap</option>
+                        <option value="spatter">Excessive Spatter</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="comments">Additional Comments:</label>
+                    <textarea id="comments" name="comments" rows="4" placeholder="Share your experience, any modifications you made, or suggestions..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button type="submit" class="btn">📤 Submit Feedback</button>
+            <a href="/" class="btn btn-primary" style="margin-left: 15px;">🏠 Back to Home</a>
+        </div>
+    </form>
+</div>
+
+<div class="form-section" style="margin-top: 30px;">
+    <h3>🎯 Why Your Feedback Matters</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+        <div style="text-align: center; padding: 20px; background: white; border-radius: 8px;">
+            <div style="font-size: 48px; margin-bottom: 10px;">🤖</div>
+            <h4>Improves AI</h4>
+            <p>Your feedback trains our machine learning models to provide better predictions.</p>
+        </div>
+
+        <div style="text-align: center; padding: 20px; background: white; border-radius: 8px;">
+            <div style="font-size: 48px; margin-bottom: 10px;">📊</div>
+            <h4>Builds Database</h4>
+            <p>Real-world results help build a comprehensive welding parameter database.</p>
+        </div>
+
+        <div style="text-align: center; padding: 20px; background: white; border-radius: 8px;">
+            <div style="font-size: 48px; margin-bottom: 10px;">🔧</div>
+            <h4>Helps Others</h4>
+            <p>Your experience helps other welders achieve better results with similar setups.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

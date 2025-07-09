@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-section">
+    <h3>🗄️ Welding Parameter Database</h3>
+    <p>Browse the current welding parameter database. This data is used to train the AI models.</p>
+
+    {% if parameters %}
+    <div style="overflow-x: auto; margin-top: 20px;">
+        <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden;">
+            <thead style="background: #f8f9fa;">
+                <tr>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Base Material</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Filler Material</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Thickness</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Joint Type</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Position</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Process</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Voltage</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Amperage</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Wire Speed</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Travel Speed</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Quality</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for param in parameters %}
+                <tr style="border-bottom: 1px solid #dee2e6;">
+                    <td style="padding: 12px;">{{ param.base_material or 'N/A' }}</td>
+                    <td style="padding: 12px;">{{ param.filler_material or 'N/A' }}</td>
+                    <td style="padding: 12px;">{{ param.thickness or 'N/A' }} mm</td>
+                    <td style="padding: 12px;">{{ param.joint_type or 'N/A' }}</td>
+                    <td style="padding: 12px;">{{ param.position_code or 'N/A' }}</td>
+                    <td style="padding: 12px;">{{ param.process_code or 'N/A' }}</td>
+                    <td style="padding: 12px;">{{ param.voltage or 'N/A' }} V</td>
+                    <td style="padding: 12px;">{{ param.amperage or 'N/A' }} A</td>
+                    <td style="padding: 12px;">{{ param.wire_feed_speed or 'N/A' }} IPM</td>
+                    <td style="padding: 12px;">{{ param.travel_speed or 'N/A' }} IPM</td>
+                    <td style="padding: 12px;">
+                        {% if param.quality_rating %}
+                            <span style="background: #28a745; color: white; padding: 4px 8px; border-radius: 4px;">
+                                {{ param.quality_rating }}/10
+                            </span>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196f3;">
+        <strong>Database Statistics:</strong>
+        <ul style="margin-top: 10px; margin-left: 20px;">
+            <li>Total Records: {{ parameters|length }}</li>
+            <li>Records with Quality Ratings: {{ parameters|selectattr('quality_rating')|list|length }}</li>
+            <li>Unique Materials: {{ parameters|map(attribute='base_material')|unique|list|length }}</li>
+        </ul>
+    </div>
+
+    {% else %}
+    <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
+        <div style="font-size: 64px; margin-bottom: 20px;">📊</div>
+        <h4>No Data Available</h4>
+        <p>The database appears to be empty. You may need to:</p>
+        <ul style="text-align: left; display: inline-block; margin-top: 15px;">
+            <li>Run the database initialization script</li>
+            <li>Populate the database with initial data</li>
+            <li>Add some welding parameters manually</li>
+        </ul>
+        <div style="margin-top: 20px;">
+            <a href="/train_models" class="btn">🔧 Initialize Database</a>
+        </div>
+    </div>
+    {% endif %}
+
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="/" class="btn btn-primary">🏠 Back to Home</a>
+    </div>
+</div>
+{% endblock %}

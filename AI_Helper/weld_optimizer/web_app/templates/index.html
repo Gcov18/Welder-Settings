@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-grid">
+    <div class="form-section">
+        <h3>📊 Material Properties</h3>
+        <form id="weldForm" method="POST" action="/predict">
+            <div class="form-group">
+                <label for="base_material">Base Material:</label>
+                <select id="base_material" name="base_material" onchange="updateMaterialProperties(this, 'base')" required>
+                    <option value="">Select base material...</option>
+                    {% for material in base_materials %}
+                    <option value="{{ material.id }}"
+                            data-material='{"carbon_content": {{ material.carbon_content or 0 }}, "thermal_conductivity": {{ material.thermal_conductivity or 0 }}, "melting_point": {{ material.melting_point or 0 }}, "density": {{ material.density or 0 }}}'>
+                        {{ material.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="filler_material">Filler Material:</label>
+                <select id="filler_material" name="filler_material" onchange="updateMaterialProperties(this, 'filler')" required>
+                    <option value="">Select filler material...</option>
+                    {% for material in filler_materials %}
+                    <option value="{{ material.id }}"
+                            data-material='{"carbon_content": {{ material.carbon_content or 0 }}, "thermal_conductivity": {{ material.thermal_conductivity or 0 }}}'>
+                        {{ material.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="thickness">Material Thickness (mm):</label>
+                <input type="number" id="thickness" name="thickness" step="0.1" min="0.5" max="50" required>
+            </div>
+    </div>
+
+    <div class="form-section">
+        <h3>🔧 Joint Configuration</h3>
+        <div class="form-group">
+            <label for="joint_type">Joint Type:</label>
+            <select id="joint_type" name="joint_type" required>
+                <option value="">Select joint type...</option>
+                {% for joint in joint_types %}
+                <option value="{{ joint.name }}">{{ joint.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="position">Welding Position:</label>
+            <select id="position" name="position" required>
+                <option value="">Select position...</option>
+                {% for position in positions %}
+                <option value="{{ position.code }}">{{ position.code }} - {{ position.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="process">Welding Process:</label>
+            <select id="process" name="process" required>
+                <option value="">Select process...</option>
+                {% for process in processes %}
+                <option value="{{ process.code }}">{{ process.code }} - {{ process.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h3>🔬 Material Properties (Auto-filled)</h3>
+        <div class="form-group">
+            <label for="base_carbon">Base Carbon Content (%):</label>
+            <input type="number" id="base_carbon" name="base_carbon" step="0.01" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="base_thermal">Base Thermal Conductivity (W/mK):</label>
+            <input type="number" id="base_thermal" name="base_thermal" step="0.1" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="base_melting_point">Base Melting Point (°C):</label>
+            <input type="number" id="base_melting_point" name="base_melting_point" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="base_density">Base Density (g/cm³):</label>
+            <input type="number" id="base_density" name="base_density" step="0.01" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="filler_carbon">Filler Carbon Content (%):</label>
+            <input type="number" id="filler_carbon" name="filler_carbon" step="0.01" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="filler_thermal">Filler Thermal Conductivity (W/mK):</label>
+            <input type="number" id="filler_thermal" name="filler_thermal" step="0.1" readonly>
+        </div>
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 30px;">
+    <button type="submit" class="btn btn-primary" onclick="submitForm(event)">
+        🎯 Generate Optimal Parameters
+    </button>
+</div>
+</form>
+
+<div id="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Calculating optimal parameters...</p>
+</div>
+
+<div id="predictions" class="predictions" style="display: none;">
+    <h3>🎯 Recommended Parameters</h3>
+    <div class="prediction-grid">
+        <!-- Predictions will be inserted here -->
+    </div>
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="/feedback" class="btn">📝 Provide Feedback</a>
+    </div>
+</div>
+
+<script>
+function submitForm(event) {
+    event.preventDefault();
+    showLoading();
+
+    const formData = new FormData(document.getElementById('weldForm'));
+    const data = Object.fromEntries(formData.entries());
+
+    fetch('/predict', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        hideLoading();
+        if (result.success) {
+            displayPredictions(result.predictions);
+        } else {
+            alert('Error: ' + result.error);
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        alert('Error: ' + error);
+    });
+}
+</script>
+{% endblock %}
